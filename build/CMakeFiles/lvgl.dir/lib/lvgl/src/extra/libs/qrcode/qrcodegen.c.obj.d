@@ -1,0 +1,34 @@
+CMakeFiles/lvgl.dir/lib/lvgl/src/extra/libs/qrcode/qrcodegen.c.obj: \
+ /Users/lars/Documents/HF/Git/RP2040TouchAdvent/lib/lvgl/src/extra/libs/qrcode/qrcodegen.c \
+ /Users/lars/.pico-sdk/toolchain/13_2_Rel1/arm-none-eabi/include/assert.h \
+ /Users/lars/.pico-sdk/toolchain/13_2_Rel1/arm-none-eabi/include/_ansi.h \
+ /Users/lars/.pico-sdk/toolchain/13_2_Rel1/arm-none-eabi/include/newlib.h \
+ /Users/lars/.pico-sdk/toolchain/13_2_Rel1/arm-none-eabi/include/_newlib_version.h \
+ /Users/lars/.pico-sdk/toolchain/13_2_Rel1/arm-none-eabi/include/sys/config.h \
+ /Users/lars/.pico-sdk/toolchain/13_2_Rel1/arm-none-eabi/include/machine/ieeefp.h \
+ /Users/lars/.pico-sdk/toolchain/13_2_Rel1/arm-none-eabi/include/sys/features.h \
+ /Users/lars/.pico-sdk/toolchain/13_2_Rel1/lib/gcc/arm-none-eabi/13.2.1/include/limits.h \
+ /Users/lars/.pico-sdk/toolchain/13_2_Rel1/lib/gcc/arm-none-eabi/13.2.1/include/syslimits.h \
+ /Users/lars/.pico-sdk/toolchain/13_2_Rel1/arm-none-eabi/include/limits.h \
+ /Users/lars/.pico-sdk/toolchain/13_2_Rel1/arm-none-eabi/include/sys/cdefs.h \
+ /Users/lars/.pico-sdk/toolchain/13_2_Rel1/arm-none-eabi/include/machine/_default_types.h \
+ /Users/lars/.pico-sdk/toolchain/13_2_Rel1/lib/gcc/arm-none-eabi/13.2.1/include/stddef.h \
+ /Users/lars/.pico-sdk/toolchain/13_2_Rel1/arm-none-eabi/include/sys/syslimits.h \
+ /Users/lars/.pico-sdk/toolchain/13_2_Rel1/arm-none-eabi/include/stdlib.h \
+ /Users/lars/.pico-sdk/toolchain/13_2_Rel1/arm-none-eabi/include/sys/reent.h \
+ /Users/lars/.pico-sdk/toolchain/13_2_Rel1/arm-none-eabi/include/_ansi.h \
+ /Users/lars/.pico-sdk/toolchain/13_2_Rel1/arm-none-eabi/include/sys/_types.h \
+ /Users/lars/.pico-sdk/toolchain/13_2_Rel1/arm-none-eabi/include/machine/_types.h \
+ /Users/lars/.pico-sdk/toolchain/13_2_Rel1/arm-none-eabi/include/sys/lock.h \
+ /Users/lars/.pico-sdk/toolchain/13_2_Rel1/arm-none-eabi/include/machine/stdlib.h \
+ /Users/lars/.pico-sdk/toolchain/13_2_Rel1/arm-none-eabi/include/alloca.h \
+ /Users/lars/.pico-sdk/toolchain/13_2_Rel1/arm-none-eabi/include/string.h \
+ /Users/lars/.pico-sdk/toolchain/13_2_Rel1/arm-none-eabi/include/sys/_locale.h \
+ /Users/lars/.pico-sdk/toolchain/13_2_Rel1/arm-none-eabi/include/strings.h \
+ /Users/lars/.pico-sdk/toolchain/13_2_Rel1/arm-none-eabi/include/sys/string.h \
+ /Users/lars/Documents/HF/Git/RP2040TouchAdvent/lib/lvgl/src/extra/libs/qrcode/qrcodegen.h \
+ /Users/lars/.pico-sdk/toolchain/13_2_Rel1/lib/gcc/arm-none-eabi/13.2.1/include/stdbool.h \
+ /Users/lars/.pico-sdk/toolchain/13_2_Rel1/lib/gcc/arm-none-eabi/13.2.1/include/stdint.h \
+ /Users/lars/.pico-sdk/toolchain/13_2_Rel1/arm-none-eabi/include/stdint.h \
+ /Users/lars/.pico-sdk/toolchain/13_2_Rel1/arm-none-eabi/include/sys/_intsup.h \
+ /Users/lars/.pico-sdk/toolchain/13_2_Rel1/arm-none-eabi/include/sys/_stdint.h
