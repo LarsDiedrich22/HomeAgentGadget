@@ -1,255 +1,109 @@
-
 #include "pico/stdlib.h"
+#include "pico/multicore.h"
 #include <stdio.h>
 
-extern "C"{
-#include "LCD_test.h"
+extern "C" {
 #include "DEV_Config.h"
 #include "LCD_1in28.h"
 #include "CST816S.h"
-#include "QMI8658.h"
-#include "LVGL_example.h"
+#include "DisplayInit.h"
+#include "SerialProtocol.h"
+#include "AgentUI.h"
+#include "WS2812.h"
 }
 
-#include "pico/stdlib.h"
-#include "hardware/pio.h"
-#include "hardware/clocks.h"
-#include "ws2812.pio.h"
-#include "pico/multicore.h"
-#include "hardware/rtc.h"
-#include "pico/util/datetime.h"
+#include "lvgl.h"
 
-#include "AdventTile.h"
-#include "DateTile.h"
-#include "TimeTile.h"
-#include "AdventTrees.h"
-#include "DS3231.hpp"
-
-#define LEDS_PIN  18 //15
-#define LEDS_LENGTH 12
-#define IS_RGBW false
-#define DEMO_GP 28
-#define DEMO_LED 27
-
-#define RTC 1
-#define RTC_SDA 16
-#define RTC_SCL 17
-#define RTC_I2C i2c0
-
-
-/***
- * Core 1 code to run the tree animations
- */
-void core1Entry(){
-	uint32_t u;
-	uint8_t d;
-
-	printf("Core 1 start\n");
-
-	AdventTrees advent(LEDS_PIN);
-	advent.setDay(0);
-
-	for (;;){
-
-		if (multicore_fifo_pop_timeout_us(5, &u)){
-			d = u & 0xFF;
-			advent.setDay(d);
-		}
-
-		for (float f=0.0; f <= 1.0; f+=0.05){
-			advent.animate(f);
-			sleep_ms(100);
-		}
-
-	}
-
+/* ---- WS2812-Farben für Gate-Zustände (läuft auf Core1) ---- */
+static void ws2812_for_msg(const sp_message_t *msg) {
+    switch (msg->type) {
+        case SP_MSG_START:       WS2812_clear();             break;
+        case SP_MSG_APPROACHING: WS2812_fill(80, 50,  0);   break;  /* Gelb  */
+        case SP_MSG_CONSENT_NEEDED: WS2812_fill(30,  0, 80); break;  /* Lila  */
+        case SP_MSG_ALLOWED:     WS2812_fill( 0, 60,  0);   break;  /* Grün  */
+        case SP_MSG_DENIED:      WS2812_clear();             break;
+        case SP_MSG_ENTER:
+            switch (msg->color) {
+                case SP_COLOR_GREEN:  WS2812_fill( 0, 80,  0); break;
+                case SP_COLOR_YELLOW: WS2812_fill(80, 50,  0); break;
+                case SP_COLOR_RED:    WS2812_fill(80,  0,  0); break;
+                default:              WS2812_fill(30, 30, 30); break;
+            }
+            break;
+        case SP_MSG_BETRAYAL:    WS2812_fill(120, 0, 0);    break;  /* Rot   */
+        case SP_MSG_DONE:
+            switch (msg->outcome) {
+                case SP_OUTCOME_SUCCESS:  WS2812_fill( 0, 40,  0);  break;
+                case SP_OUTCOME_BETRAYAL: WS2812_fill(80,  0,  0);  break;
+                case SP_OUTCOME_BLOCKED:  WS2812_fill(20, 20, 20);  break;
+                default: WS2812_clear(); break;
+            }
+            break;
+        default: break;
+    }
 }
 
-
-
-/***
- * Init the display
- * @return
+/* ---- Core1: WS2812 über multicore FIFO ---- */
+/*
+ * Packing:  [23:16] = sp_msg_type_t  |  [15:8] = sp_color_t  |  [7:0] = sp_outcome_t
  */
-bool initDisplay(){
-    if (DEV_Module_Init() != 0){
-        return false;
+void core1_entry() {
+    WS2812_init();
+    WS2812_clear();
+
+    for (;;) {
+        uint32_t val = multicore_fifo_pop_blocking();
+        sp_message_t msg = {};
+        msg.type    = (sp_msg_type_t)((val >> 16) & 0xFF);
+        msg.color   = (sp_color_t)  ((val >>  8) & 0xFF);
+        msg.outcome = (sp_outcome_t)( val         & 0xFF);
+        ws2812_for_msg(&msg);
+    }
+}
+
+static void push_led_state(const sp_message_t *msg) {
+    uint32_t val = ((uint32_t)msg->type    << 16)
+                 | ((uint32_t)msg->color   <<  8)
+                 |  (uint32_t)msg->outcome;
+    multicore_fifo_push_blocking(val);
+}
+
+/* ---- Consent-Callback (wird aus AgentUI aufgerufen) ---- */
+static void on_consent(bool allow) {
+    SerialProtocol_send_consent(allow);
+}
+
+/* ---- main ---- */
+int main(void) {
+    stdio_init_all();
+    sleep_ms(500);   /* USB-Serial bereit */
+
+    if (DEV_Module_Init() != 0) {
+        for (;;) { sleep_ms(500); }
     }
 
-    // /*Init LCD*/
     LCD_1IN28_Init(HORIZONTAL);
     LCD_1IN28_Clear(WHITE);
     DEV_SET_PWM(100);
-
-    // /*Init touch screen*/
     CST816S_init(CST816S_Point_Mode);
 
-    // /*Init LVGL*/
-    LVGL_Init();
+    DisplayInit();
+    AgentUI_init(on_consent);
 
-    //Widgets_Init();
-    return true;
-}
+    multicore_reset_core1();
+    multicore_launch_core1(core1_entry);
 
-#ifdef RTC
-	DS3231 ds3231(RTC_I2C,  RTC_SDA,  RTC_SCL);
-#endif
-void initRTC(){
-	datetime_t t;
-#ifdef RTC
-	t.year 			= 	ds3231.get_year();
-	t.month 		= 	ds3231.get_mon();
-	t.day 			= ds3231.get_day();
-	t.hour			= ds3231.get_hou();
-	t.min			= ds3231.get_min();
-	t.sec			= ds3231.get_sec();
-	t.dotw		= 0;
-#else
-	 t = {
-	            .year  = 2024,
-	            .month = 10,
-	            .day   = 11,
-	            .dotw  = 5, // 0 is Sunday, so 5 is Friday
-	            .hour  = 12,
-	            .min   = 00,
-	            .sec   = 00
-	    };
-#endif
+    sp_message_t msg;
+    for (;;) {
+        lv_task_handler();
 
-	    // Start the RTC
-	    rtc_init();
-	    rtc_set_datetime(&t);
-}
+        if (SerialProtocol_poll(&msg)) {
+            AgentUI_handle(&msg);
+            push_led_state(&msg);
+        }
 
-uint8_t getDay(){
-	uint8_t today = 0;
-	datetime_t t ;
-	if ( rtc_get_datetime(&t)){
-		if (t.month == 12){
-			today = t.day;
-		} else if (
-				(t.month == 1) &&
-				(t.day <= 5)){
-			today = t.day + 31;
-		}
-	}
-	return today;
-}
-
-
-void initDemo(){
-	gpio_init(DEMO_GP);
-	gpio_pull_up (DEMO_GP);
-	gpio_set_dir(DEMO_GP, GPIO_IN);
-
-	gpio_init(DEMO_LED);
-	gpio_set_dir(DEMO_LED, GPIO_OUT);
-	gpio_put(DEMO_LED, false);
-}
-
-bool isDemo(){
-	uint8_t c = gpio_get(DEMO_GP);
-	if (c==0){
-		gpio_put(DEMO_LED, true);
-	} else {
-		gpio_put(DEMO_LED, false);
-	}
-	return (c == 0);
-}
-
-
-/***
- * This will be run on core0
- */
-void core2Entry(){
-	//bool demo = false;
-	uint32_t nextMove = 0;
-
-    lv_obj_t *tv = lv_tileview_create(lv_scr_act());
-    lv_obj_set_scrollbar_mode(tv,  LV_SCROLLBAR_MODE_OFF);
-
-	AdventTile adv ;
-	adv.init(tv, 0, 0, LV_DIR_ALL);
-	adv.setToday(0);
-
-	DateTile dateTile;
-	dateTile.init(tv, 0, 1, LV_DIR_ALL);
-#ifdef RTC
-	dateTile.setRTC(&ds3231);
-#endif
-
-	TimeTile timeTile;
-	timeTile.init(tv, 0, 2, LV_DIR_ALL);
-#ifdef RTC
-	timeTile.setRTC(&ds3231);
-#endif
-
-
-	 for (;;){
-		 lv_task_handler();
-
-		 uint32_t now =  to_ms_since_boot (get_absolute_time());
-		 if (now > nextMove){
-			 uint8_t d = adv.getCurrent();
-			 d++;
-			 if (d > adv.getToday()){
-				 d = 0;
-			 }
-			 adv.setCurrent(d);
-
-			 if (isDemo()){
-				 d = adv.getToday();
-				 d++;
-				 if (d > 36){
-					 d = 0;
-				 }
-				 adv.setToday(d);
-				 uint32_t dd = d;
-				 multicore_fifo_push_timeout_us (dd,  5);
-			 } else {
-				 d = getDay();
-				 if ( d != adv.getToday()) {
-						 adv.setToday(d);
-						 adv.setCurrent(d);
-						 uint32_t dd = d;
-						 multicore_fifo_push_timeout_us (dd,  5);
-				 }
-			 }
-
-			 nextMove = now + 10000;
-		 }
-
-
-		DEV_Delay_ms(5);
-	 }
-
-	 DEV_Module_Exit();
-
-
-}
-
-
-
-int main(void)
-{
-	stdio_init_all();
-	sleep_ms(2000);
-	printf("GO\n");
-
-	initRTC();
-
-	initDemo();
-	initDisplay();
-	printf("Disp Init\n");
-	sleep_ms(5);
-
-	multicore_reset_core1();
-	multicore_launch_core1(core1Entry);
-
-
-	core2Entry();
-
-
+        DEV_Delay_ms(5);
+    }
 
     return 0;
 }
