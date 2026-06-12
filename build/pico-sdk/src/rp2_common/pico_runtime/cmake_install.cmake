@@ -40,6 +40,6 @@ endif()
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
 if(CMAKE_INSTALL_LOCAL_ONLY)
-  file(WRITE "/Users/lars/Documents/HF/Git/RP2040TouchAdvent/build/pico-sdk/src/rp2_common/pico_runtime/install_local_manifest.txt"
+  file(WRITE "/Users/lars/Documents/HF/Git/HomeAgentGadget/build/pico-sdk/src/rp2_common/pico_runtime/install_local_manifest.txt"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
 endif()

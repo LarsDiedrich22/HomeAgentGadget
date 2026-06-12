@@ -39,22 +39,22 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/Users/lars/Documents/HF/Git/RP2040TouchAdvent/build/pico-sdk/tools/cmake_install.cmake")
+  include("/Users/lars/Documents/HF/Git/HomeAgentGadget/build/pico-sdk/tools/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/Users/lars/Documents/HF/Git/RP2040TouchAdvent/build/pico-sdk/src/cmake_install.cmake")
+  include("/Users/lars/Documents/HF/Git/HomeAgentGadget/build/pico-sdk/src/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/Users/lars/Documents/HF/Git/RP2040TouchAdvent/build/pico-sdk/docs/cmake_install.cmake")
+  include("/Users/lars/Documents/HF/Git/HomeAgentGadget/build/pico-sdk/docs/cmake_install.cmake")
 endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
 if(CMAKE_INSTALL_LOCAL_ONLY)
-  file(WRITE "/Users/lars/Documents/HF/Git/RP2040TouchAdvent/build/pico-sdk/install_local_manifest.txt"
+  file(WRITE "/Users/lars/Documents/HF/Git/HomeAgentGadget/build/pico-sdk/install_local_manifest.txt"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
 endif()

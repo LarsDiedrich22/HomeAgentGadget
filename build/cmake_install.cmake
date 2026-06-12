@@ -1,4 +1,4 @@
-# Install script for directory: /Users/lars/Documents/HF/Git/RP2040TouchAdvent
+# Install script for directory: /Users/lars/Documents/HF/Git/HomeAgentGadget
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -38,33 +38,33 @@ if(NOT DEFINED CMAKE_OBJDUMP)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  execute_process(COMMAND /Users/lars/bin/picoDeploy.sh /Users/lars/Documents/HF/Git/RP2040TouchAdvent/build/src/Advent.elf)
+  execute_process(COMMAND /Users/lars/bin/picoDeploy.sh /Users/lars/Documents/HF/Git/HomeAgentGadget/build/src/Advent.elf)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
   list(APPEND CMAKE_ABSOLUTE_DESTINATION_FILES
-   "/Users/lars/Documents/HF/Git/RP2040TouchAdvent/build/Advent.uf2")
+   "/Users/lars/Documents/HF/Git/HomeAgentGadget/build/Advent.uf2")
   if(CMAKE_WARN_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(WARNING "ABSOLUTE path INSTALL DESTINATION : ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
   if(CMAKE_ERROR_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(FATAL_ERROR "ABSOLUTE path INSTALL DESTINATION forbidden (by caller): ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
-  file(INSTALL DESTINATION "/Users/lars/Documents/HF/Git/RP2040TouchAdvent/build" TYPE FILE FILES "/Users/lars/Documents/HF/Git/RP2040TouchAdvent/build/src/Advent.uf2")
+  file(INSTALL DESTINATION "/Users/lars/Documents/HF/Git/HomeAgentGadget/build" TYPE FILE FILES "/Users/lars/Documents/HF/Git/HomeAgentGadget/build/src/Advent.uf2")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("/Users/lars/Documents/HF/Git/RP2040TouchAdvent/build/pico-sdk/cmake_install.cmake")
-  include("/Users/lars/Documents/HF/Git/RP2040TouchAdvent/build/DS3231LIB/cmake_install.cmake")
-  include("/Users/lars/Documents/HF/Git/RP2040TouchAdvent/build/src/cmake_install.cmake")
+  include("/Users/lars/Documents/HF/Git/HomeAgentGadget/build/pico-sdk/cmake_install.cmake")
+  include("/Users/lars/Documents/HF/Git/HomeAgentGadget/build/DS3231LIB/cmake_install.cmake")
+  include("/Users/lars/Documents/HF/Git/HomeAgentGadget/build/src/cmake_install.cmake")
 
 endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
 if(CMAKE_INSTALL_LOCAL_ONLY)
-  file(WRITE "/Users/lars/Documents/HF/Git/RP2040TouchAdvent/build/install_local_manifest.txt"
+  file(WRITE "/Users/lars/Documents/HF/Git/HomeAgentGadget/build/install_local_manifest.txt"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
 endif()
 if(CMAKE_INSTALL_COMPONENT)
@@ -80,6 +80,6 @@ else()
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
-  file(WRITE "/Users/lars/Documents/HF/Git/RP2040TouchAdvent/build/${CMAKE_INSTALL_MANIFEST}"
+  file(WRITE "/Users/lars/Documents/HF/Git/HomeAgentGadget/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
 endif()
